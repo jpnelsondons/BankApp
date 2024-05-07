@@ -57,6 +57,7 @@ class MyFrame
     private JButton sub;
     private JButton reset;
     private JButton readF;
+    private JButton readEmp;
     private JTextArea tout;
     private JLabel res;
     private JTextArea resadd;
@@ -70,6 +71,7 @@ class MyFrame
     private JLabel lTrans;
     private JButton subTrans;
     private ArrayList customers = new ArrayList();
+    private ArrayList employees = new ArrayList();
 
     private String dates[]
             = {"1", "2", "3", "4", "5",
@@ -102,6 +104,8 @@ class MyFrame
     ArrayList<BankAccount> arrAcc = new ArrayList<BankAccount>();
     //private String IDs[] = {"none"}; // = getIDs();
     private String strCustomers = "";
+    private String strEmployees = "";
+    
 
     // constructor, to initialize the components
     // with default values.
@@ -226,12 +230,19 @@ class MyFrame
         reset.addActionListener(this);
         c.add(reset);
 
-        readF = new JButton("Read CSV");
+        readF = new JButton("Read Customer");
         readF.setFont(new Font("Arial", Font.PLAIN, 15));
-        readF.setSize(120, 20);
-        readF.setLocation(200, 450);
+        readF.setSize(160, 20);
+        readF.setLocation(20, 450);
         readF.addActionListener(this);
         c.add(readF);
+        
+        readEmp = new JButton("Read Employee");
+        readEmp.setFont(new Font("Arial", Font.PLAIN, 15));
+        readEmp.setSize(160, 20);
+        readEmp.setLocation(200, 450);
+        readEmp.addActionListener(this);
+        c.add(readEmp);
         
         laID = new JLabel("Acct#");
         laID.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -364,7 +375,7 @@ class MyFrame
             year.setSelectedIndex(0);
             resadd.setText(def);
         } else if (e.getSource() == readF){
-            res.setText("Read File Button Clicked...");
+            res.setText("Read Custmers Button Clicked...");
             //the readCSV method returns an aray of strings - each one a comma separated line of data
             strArr = readCSV("customers.csv");
             //now count through each line and create Customer objects from each line
@@ -386,15 +397,36 @@ class MyFrame
             tout.setText(strCustomers);
             tout.append("Customers Number: " + customers.size());
             //System.out.println(strCustomers);
-        } else if (e.getSource() == subTrans){
-            String typ = "";
-            if(dep.isSelected()){
-                typ = "Deposit";
-            }else{
-                typ = "Withdrawal";
+            } else if (e.getSource() == readEmp){
+                res.setText("Read File Employees Clicked...");
+            //the readCSV method returns an aray of strings - each one a comma separated line of data
+            strArr = readCSV("employees.csv");
+            //now count through each line and create Customer objects from each line
+            int index = 0;
+            //String result = strArr[index];
+            index ++;
+            strEmployees = "";
+            for(index = 1; index < strArr.size(); index ++){
+                //System.out.println(strArr.get(index));
+                Employee myEmployee = createEmployee(strArr.get(index));
+                //System.out.println(myCustomer);
+                //each customer is shown as a form object
+                //showCustomer(myCustomer);
+                //it would also be possile to add each customer to another ArrayList
+                employees.add(myEmployee);
+                strEmployees = strEmployees + myEmployee + "\n";
+                //index++;
             }
-            res.setText("Transaction button pressed: " + typ);
-            doTransaction();
+            tout.setText(strEmployees);
+        } else if (e.getSource() == subTrans){
+        String typ = "";
+        if(dep.isSelected()){
+            typ = "Deposit";
+        }else{
+            typ = "Withdrawal";
+        }
+        res.setText("Transaction button pressed: " + typ);
+        doTransaction();
         }
     }
     
@@ -467,6 +499,16 @@ class MyFrame
         String add = sc.next();
         Customer nc = new Customer(id, name, mbl, DOB, add);
         return nc;
+    }
+    
+    public Employee createEmployee(String inRec){
+        Scanner sc = new Scanner(inRec);
+        sc.useDelimiter(",");
+        long id = Long.parseLong(sc.next());
+        String name = sc.next();
+        String role = sc.next();
+        Employee ne = new Employee(id, name, role);
+        return ne;
     }
     
     public void saveFile(String inText) {
@@ -550,7 +592,7 @@ class MyFrame
     }
     //Customer Class
     class Customer{
-        String cName, cMobile, cDOB, cAddress, cID;
+        private String cName, cMobile, cDOB, cAddress, cID;
 
         //full constructor
         public Customer(String inID, String inN, String iMob, String iDOB, String iAdd){
