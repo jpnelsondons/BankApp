@@ -1,0 +1,13 @@
+This project to finish off the semester will let you create a visual form for data entry and recording. It will also let you see how files can be saved to the computer, and read from it. Here are some basic requirements
+
+1) A visual form including Labels, Buttons, Text Boxes + Areas (see the Bank App and GIU_Project examples in jpnelsondons (github.com)
+
+2) Allow users to register using the form, as well as collect data, such as transactions, or some data entry
+
+3) Save data / registered users to a csv (comma separated variables) files
+
+4) Read data from the csv files into your system, and use this to create objects and fill Arrays/ArrayLists with these objects
+
+5) Process the data from the objects in some way - for example show the account for a particular user, or calculate totals from data in the files
+
+6) The finally created projects will be presented in class on the finals day (Tuesday of finals week) - so impres us all!
