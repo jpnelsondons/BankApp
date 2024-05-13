@@ -58,6 +58,7 @@ class MyFrame
     private JButton reset;
     private JButton readF;
     private JButton readEmp;
+    private JButton acct;
     private JTextArea tout;
     private JLabel res;
     private JTextArea resadd;
@@ -101,7 +102,7 @@ class MyFrame
             "2015", "2016", "2017", "2018",
             "2019", "2020", "2021", "2022"};
     ArrayList<String> strArr = new ArrayList<String>();
-    ArrayList<BankAccount> arrAcc = new ArrayList<BankAccount>();
+    ArrayList<Account> arrAcct = new ArrayList<Account>();
     //private String IDs[] = {"none"}; // = getIDs();
     private String strCustomers = "";
     private String strEmployees = "";
@@ -110,7 +111,7 @@ class MyFrame
     // constructor, to initialize the components
     // with default values.
     public MyFrame() {
-        setTitle("Registration Form");
+        setTitle("Bank App");
         setBounds(300, 90, 900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
@@ -118,7 +119,7 @@ class MyFrame
         c = getContentPane();
         c.setLayout(null);
 
-        title = new JLabel("Registration Form");
+        title = new JLabel("Bank App");
         title.setFont(new Font("Arial", Font.PLAIN, 30));
         title.setSize(300, 30);
         title.setLocation(300, 30);
@@ -230,17 +231,17 @@ class MyFrame
         reset.addActionListener(this);
         c.add(reset);
 
-        readF = new JButton("Read Customer");
+        readF = new JButton("Customers");
         readF.setFont(new Font("Arial", Font.PLAIN, 15));
-        readF.setSize(160, 20);
+        readF.setSize(120, 20);
         readF.setLocation(20, 450);
         readF.addActionListener(this);
         c.add(readF);
         
-        readEmp = new JButton("Read Employee");
+        readEmp = new JButton("Employees");
         readEmp.setFont(new Font("Arial", Font.PLAIN, 15));
-        readEmp.setSize(160, 20);
-        readEmp.setLocation(200, 450);
+        readEmp.setSize(120, 20);
+        readEmp.setLocation(140, 450);
         readEmp.addActionListener(this);
         c.add(readEmp);
         
@@ -320,6 +321,13 @@ class MyFrame
         resadd.setLocation(570, 175);
         resadd.setLineWrap(false);
         c.add(resadd);
+        
+        acct = new JButton("Accounts");
+        acct.setFont(new Font("Arial", Font.PLAIN, 15));
+        acct.setSize(100, 20);
+        acct.setLocation(250, 450);
+        acct.addActionListener(this);
+        c.add(acct);
 
         setVisible(true);
     }
@@ -426,10 +434,29 @@ class MyFrame
             typ = "Withdrawal";
         }
         res.setText("Transaction button pressed: " + typ);
-        doTransaction();
+        //doTransaction();
+        }else if(e.getSource() == acct){
+            tout.setText("Read Accounts");
+            res.setText("Read Accounts Clicked...");
+            strArr = readCSV("accounts.csv");
+            //System.out.println(strArr);
+            //add Acount objects to arrAcct
+            for(int i = 1; i < strArr.size(); i++){
+                String strTemp = strArr.get(i);
+                //System.out.println(strArr.size());
+                String[] tempArr = new String[4];
+                tempArr = strTemp.split(",");
+                long lngAID = Long.parseLong(tempArr[0]);
+                long lngCustID = Long.parseLong(tempArr[1]);
+                double lngBal = Double.parseDouble(tempArr[2]);
+                String strType = tempArr[3];
+                Account tempA = new Account(lngAID, lngCustID, lngBal, strType);
+                arrAcct.add(tempA);
+            }
         }
+        System.out.println(arrAcct);
     }
-    
+    /*
     public void doTransaction(){
         //the code for a transaction will go here
         BankAccount thisAcct = new BankAccount("", 0);
@@ -474,7 +501,7 @@ class MyFrame
 
         tout.setText("Account " + ID + ", " + type + ": $" + credits + "\nNew Balance: $" + dec.format(thisAcct.getBalance()));
     }
-    
+    */
     public String formatDecimal(double number) {
         double epsilon = 0.004f; // 4 tenths of a cent
         if (Math.abs(Math.round(number) - number) < epsilon) {
@@ -562,7 +589,7 @@ class MyFrame
             System.out.println("exception occurred" + e);
         }
     }
-    //method for reading CSV file
+     //method for reading CSV file
     public ArrayList readCSV(String inPath){
         String result = "";
         ArrayList line = new ArrayList();
@@ -575,11 +602,13 @@ class MyFrame
             //add each line to an array
             while (sc.hasNext()) //returns a boolean value
             {
-                result = sc.next() + "\t"; //find and returns the next complete token from this scanner
+                result = sc.nextLine() + "\t"; //find and returns the next complete token from this scanner
+                //System.out.println(result);
                 line.add(result);
                 index ++;
             }
             sc.close(); //closes the scanner
+            //System.out.println(line);
             return line;
             }
             // Catch block to handle the exceptions

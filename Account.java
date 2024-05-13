@@ -13,13 +13,20 @@ public class Account {
     private long acctNum = 0;
     private double balance = 0.0;
     private long customerID = 0;
-    private boolean isCurrentAcct = true; //true is the value for a current account, false for Savings
+    private String isCurrentAcct = "current"; //default for a current account, other is for savings
     
-    public void setIsCurrentAcct(boolean inC){
+    public Account(long inNum, long inCID, double inBal, String inCurr){
+        acctNum = inNum;
+        balance = inBal;
+        customerID = inCID;
+        isCurrentAcct = inCurr;
+    }
+    
+    public void setIsCurrentAcct(String inC){
         isCurrentAcct = inC;
     }
     
-    public boolean getIsCurrentAcct(){
+    public String getIsCurrentAcct(){
         return isCurrentAcct;
     }
     
@@ -64,8 +71,17 @@ public class Account {
         
         return t;
     }
+    
+    public String toString(){
+        String result = "";
+        result = "Acct# \t" + acctNum + "\n" +
+                "Customer # \t" + customerID + "\n" +
+                "Balance: \t" + balance + "\n" +
+                "Type: \t" + isCurrentAcct + "\n";
+        return result;
+    }
 }
-
+/*
 class CurrentAccount extends Account{
     public final String CURRENT = "CURRENT";
 }
@@ -82,3 +98,4 @@ class SavingsAccount extends Account{
         return intRate;
     }
 }
+*/
