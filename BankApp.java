@@ -62,6 +62,8 @@ class MyFrame
     private JTextArea tout;
     private JLabel res;
     private JTextArea resadd;
+    private JLabel lblCust;
+    private JComboBox ddCust;
     private JTextField taID;
     private JLabel laID;
     private JTextField taAmt;
@@ -248,25 +250,38 @@ class MyFrame
         laID = new JLabel("Acct#");
         laID.setFont(new Font("Arial", Font.PLAIN, 20));
         laID.setSize(70, 30);
-        laID.setLocation(90, 495);
+        laID.setLocation(105, 495);
         c.add(laID);
         
         taID = new JTextField();
         taID.setFont(new Font("Arial", Font.PLAIN, 15));
-        taID.setSize(30, 20);
-        taID.setLocation(150, 500);
+        taID.setSize(90, 20);
+        taID.setLocation(105, 520);
         c.add(taID);
+        
+        lblCust = new JLabel("Cust ID");
+        lblCust.setFont(new Font("Arial", Font.PLAIN, 20));
+        lblCust.setSize(90, 20);
+        lblCust.setLocation(10, 480);
+        c.add(lblCust);
+        
+        Integer[] nums = {0,1,2,3,4,5,6};
+        ddCust = new JComboBox(nums);
+        ddCust.setFont(new Font("Arial", Font.PLAIN, 15));
+        ddCust.setSize(90, 20);
+        ddCust.setLocation(10, 520);
+        c.add(ddCust);
         
         lAmt = new JLabel("Amt");
         lAmt.setFont(new Font("Arial", Font.PLAIN, 20));
-        lAmt.setSize(70, 30);
-        lAmt.setLocation(190, 495);
+        lAmt.setSize(100, 30);
+        lAmt.setLocation(200, 495);
         c.add(lAmt);
         
         taAmt = new JTextField();
         taAmt.setFont(new Font("Arial", Font.PLAIN, 15));
-        taAmt.setSize(30, 20);
-        taAmt.setLocation(240, 500);
+        taAmt.setSize(100, 20);
+        taAmt.setLocation(200, 520);
         c.add(taAmt);
 
         tout = new JTextArea();
@@ -453,13 +468,37 @@ class MyFrame
                 Account tempA = new Account(lngAID, lngCustID, lngBal, strType);
                 arrAcct.add(tempA);
             }
+            //associate account objects with customer objects
+            linkCustomerAccounts();
+            
         }
-        System.out.println(arrAcct);
+        
+        //System.out.println(arrAcct);
     }
-    /*
+    //function to link customers to their accounts
+    private int linkCustomerAccounts(){
+        //System.out.println("link");
+        Customer tempCust;
+        Account tempAccount;
+        for(int i = 0; i < customers.size(); i++){
+            tempCust = (Customer)customers.get(i);
+            //System.out.println(tempCust);
+            for(int j = 0; j < arrAcct.size(); j++){
+                tempAccount = (Account)arrAcct.get(j);
+                //System.out.println(tempAccount);
+                if(tempCust.getCustomerID() == tempAccount.getCustomerID()){
+                    //System.out.println(tempCust);
+                    tempCust.setAccount(tempAccount);
+                }
+            }
+            tout.append(tempCust.toString());
+        }
+        return 1;
+    }
+    
     public void doTransaction(){
         //the code for a transaction will go here
-        BankAccount thisAcct = new BankAccount("", 0);
+        Account thisAcct = new Account();
         boolean hasAcct = false;
         //get transaction type
         String type = "";
@@ -472,11 +511,11 @@ class MyFrame
         double amt = 0.0;
         amt = Double.parseDouble(taAmt.getText());
         //get transaction customer
-        int ID = Integer.parseInt(taID.getText());
+        long ID = Integer.parseInt(taID.getText());
         //determine if they have an account
-        for (int i = 0; i < arrAcc.size(); i++){
-            BankAccount temp = arrAcc.get(i);
-            if(ID == Integer.parseInt(temp.getID())){
+        for (int i = 0; i < arrAcct.size(); i++){
+            Account temp = arrAcct.get(i);
+            if(ID == temp.getAcctNum()){
                 thisAcct = temp;
                 hasAcct = true;
                 break;
@@ -485,23 +524,23 @@ class MyFrame
         //if not create one with $100 starting amount, ID for the customer
         if(!hasAcct){
             //create a new account with $100
-            thisAcct = new BankAccount("" + ID, 100);
-            arrAcc.add(thisAcct);
+            //thisAcct = new Account(ID, 100);
+            //arrAcc.add(thisAcct);
         }
         //carry out the transaction
         if(type == "Deposit"){
-            thisAcct.makeDeposit(amt);
+            //thisAcct.makeDeposit(amt);
         }else{
-            if(thisAcct.makeWithdrawal(amt) < 0){
-                res.setText("You cannot reduce your account to zero");
-            }
+            //if(thisAcct.makeWithdrawal(amt) < 0){
+              //res.setText("You cannot reduce your account to zero");
+            //}
         }
         DecimalFormat dec = new DecimalFormat("#.00 USD");
         String credits = dec.format(amt);
 
         tout.setText("Account " + ID + ", " + type + ": $" + credits + "\nNew Balance: $" + dec.format(thisAcct.getBalance()));
     }
-    */
+    
     public String formatDecimal(double number) {
         double epsilon = 0.004f; // 4 tenths of a cent
         if (Math.abs(Math.round(number) - number) < epsilon) {
@@ -519,7 +558,7 @@ class MyFrame
     public Customer createCustomer(String inRec){
         Scanner sc = new Scanner(inRec);
         sc.useDelimiter(",");
-        String id = sc.next();
+        long id = sc.nextLong();
         String name = sc.next();
         String mbl = sc.next();
         String DOB = sc.next();
@@ -621,10 +660,13 @@ class MyFrame
     }
     //Customer Class
     class Customer{
-        private String cName, cMobile, cDOB, cAddress, cID;
+        private String cName, cMobile, cDOB, cAddress;
+        private long cID;
+        private Account sav = new Account(); //a savings account
+        private Account cur = new Account(); //a current account
 
         //full constructor
-        public Customer(String inID, String inN, String iMob, String iDOB, String iAdd){
+        public Customer(long inID, String inN, String iMob, String iDOB, String iAdd){
             cID = inID;
             cName = inN;
             cMobile = iMob;
@@ -638,9 +680,39 @@ class MyFrame
             cDOB = "";
             cAddress = "";
         }
+        //method to return CustomerID
+        public long getCustomerID(){
+            return cID;
+        }
+        
+        //method to add account
+        public int setAccount(Account inAccount){
+            
+            if (inAccount.getIsCurrentAcct().trim().equalsIgnoreCase("current")){
+                System.out.println(cID + ": " + inAccount.getIsCurrentAcct());
+                cur = inAccount;
+                return 1;
+            }else if (inAccount.getIsCurrentAcct().trim().equalsIgnoreCase("savings")){
+                System.out.println(cID + ": " + inAccount.getIsCurrentAcct());
+                sav = inAccount;
+                return 1;
+            }
+            return 0;
+        }
+        //method to get an Account of either type
+        public Account getAccount(String type){
+            if(type.equalsIgnoreCase("current")){
+                return cur;
+            }else{
+               return sav; 
+            }
+        }
+        
         public String toString(){
             String result = "";
-            result = "ID: " + cID + "-Customer " + cName + ", Born " + cDOB + " lives at " + cAddress + ", and can be contacted at " + cMobile;
+            result = "ID: " + cID + "-Customer " + cName + ", Born " + cDOB + " lives at " + cAddress + ", and can be contacted at " + cMobile
+                    + "\nSavings account balance: " + sav.getBalance()
+                    + "\nCurrent account balance: " + cur.getBalance() + "\n";
             return  result;
         }
     }

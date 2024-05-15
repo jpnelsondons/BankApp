@@ -22,6 +22,13 @@ public class Account {
         isCurrentAcct = inCurr;
     }
     
+    public Account(){
+        acctNum = 0;
+        balance = 0;
+        customerID = 0;
+        isCurrentAcct = "null";
+    }
+    
     public void setIsCurrentAcct(String inC){
         isCurrentAcct = inC;
     }
