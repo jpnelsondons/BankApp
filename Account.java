@@ -61,15 +61,17 @@ public class Account {
         return balance;
     }
     
-    public double deposit(){
+    public double deposit(double inAmt){
         double dep = 0.0;
-        
+        dep = inAmt;
+        balance = balance + dep;
         return dep;
     }
     
-    public double withdraw(){
+    public double withdraw(double inAmt){
         double wd = 0.0;
-        
+        wd = inAmt;
+        balance = balance - wd;
         return wd;
     }
     

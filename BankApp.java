@@ -291,12 +291,15 @@ class MyFrame
         tout.setLocation(440, 100);
         tout.setLineWrap(false);
         tout.setEditable(false);
-        c.add(tout);
+        JScrollPane scrolltxt;
+        scrolltxt=new JScrollPane(tout);
+        scrolltxt.setBounds(440,100,400,400);
+        c.add(scrolltxt);
 
         res = new JLabel("");
         res.setFont(new Font("Arial", Font.PLAIN, 20));
         res.setSize(500, 25);
-        res.setLocation(100, 530);
+        res.setLocation(100, 540);
         c.add(res);
                 
         lTrans = new JLabel("Transaction");
@@ -326,7 +329,7 @@ class MyFrame
         subTrans = new JButton("Transact");
         subTrans.setFont(new Font("Arial", Font.PLAIN, 15));
         subTrans.setSize(100, 20);
-        subTrans.setLocation(300, 500);
+        subTrans.setLocation(300, 520);
         subTrans.addActionListener(this);
         c.add(subTrans);
 
@@ -377,7 +380,7 @@ class MyFrame
                 tout.setText(data + data1 + data2 + data3);
                 tout.setEditable(false);
                 res.setText("Registration Successfully..");
-                saveFile(tout.getText());
+                saveFile("customers.vsc", tout.getText());
                 appendStrToFile("csv.csv", csv);
             } else {
                 tout.setText("");
@@ -449,7 +452,7 @@ class MyFrame
             typ = "Withdrawal";
         }
         res.setText("Transaction button pressed: " + typ);
-        //doTransaction();
+        doTransaction();
         }else if(e.getSource() == acct){
             tout.setText("Read Accounts");
             res.setText("Read Accounts Clicked...");
@@ -511,7 +514,7 @@ class MyFrame
         double amt = 0.0;
         amt = Double.parseDouble(taAmt.getText());
         //get transaction customer
-        long ID = Integer.parseInt(taID.getText());
+        long ID = Long.parseLong(taID.getText());
         //determine if they have an account
         for (int i = 0; i < arrAcct.size(); i++){
             Account temp = arrAcct.get(i);
@@ -530,15 +533,25 @@ class MyFrame
         //carry out the transaction
         if(type == "Deposit"){
             //thisAcct.makeDeposit(amt);
+            thisAcct.deposit(amt);
         }else{
             //if(thisAcct.makeWithdrawal(amt) < 0){
-              //res.setText("You cannot reduce your account to zero");
+              thisAcct.withdraw(amt);
             //}
         }
         DecimalFormat dec = new DecimalFormat("#.00 USD");
         String credits = dec.format(amt);
+        String strCustAccounts = "";
+        for(int i = 0; i < customers.size(); i++){
+            Customer c = (Customer)customers.get(i);
+            //Account temp = c.getAccount("current");
+            strCustAccounts = strCustAccounts + c.toString() + "\n";
+        }
+        for(int j = 0; j < arrAcct.size(); j ++){
+            System.out.println(arrAcct.get(j));
+        }
 
-        tout.setText("Account " + ID + ", " + type + ": $" + credits + "\nNew Balance: $" + dec.format(thisAcct.getBalance()));
+        tout.setText(strCustAccounts);
     }
     
     public String formatDecimal(double number) {
@@ -577,10 +590,10 @@ class MyFrame
         return ne;
     }
     
-    public void saveFile(String inText) {
+    public void saveFile(String fileName, String inText) {
         // Creating an instance of file
         Path path
-                = Paths.get("gfg.txt");
+                = Paths.get(fileName);
 
         // Custom string as an input
         String str
@@ -601,7 +614,7 @@ class MyFrame
         catch (IOException ex) {
             // Print messqage exception occurred as
             // invalid. directory local path is passed
-            System.out.print("Invalid Path");
+            System.out.print("Invalid Path\n" + ex.getStackTrace());
         }
     }
 
